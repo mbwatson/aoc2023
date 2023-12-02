@@ -24,9 +24,9 @@ const constraints = { red: 12, green: 13, blue: 14 }
  * @return     Object          The game as an object
  */
 const parseGame = game => {
-  const [gameName, reveals] = game.split(':')
-  const gameNumber = +gameName.split(' ')[1]
-  const gameReveals = reveals.split(';').map(str => {
+  const [gameName, gameReveals] = game.split(':')
+  const index = +gameName.split(' ')[1]
+  const reveals = gameReveals.split(';').map(str => {
     const pattern = new RegExp(/\d+? (red|green|blue)/g)
     const rawPulls = str.match(pattern)
     const pulls = rawPulls.reduce((acc, pull) => {
@@ -36,7 +36,9 @@ const parseGame = game => {
     }, {})
     return pulls
   })
-  return { index: gameNumber, reveals: gameReveals }
+  const valid = validateGame(reveals)
+  const requirements = gameRequirements(reveals)
+  return { index, requirements, reveals, valid }
 }
 
 /**
@@ -58,42 +60,24 @@ const validateGame = reveals => {
   return valid
 }
 
-const gameRequirements = reveals => {
-  return reveals.reduce(
-    (acc, reveal) => {
-      Object.keys(reveal).forEach(color => {
+const gameRequirements = reveals => reveals
+  .reduce((acc, reveal) => {
+    Object.keys(reveal)
+      .forEach(color => {
         acc[color] = Math.max(acc[color], reveal[color])
       })
-      return acc
-    },
-    { red: 0, green: 0, blue: 0 }
-  )
-}
+    return acc
+  }, { red: 0, green: 0, blue: 0 })
 
-const games = input.map(parseGame)
-const validGames = games.reduce((acc, game) => {
-  if (validateGame(game.reveals)) {
-    acc.push(game)
-  }
-  return acc
-}, [])
-const validGameIdSum = validGames.reduce((sum, game) => {
-  sum += game.index
-  return sum
-}, 0)
+//
 
-// const validGames = games.reduce((acc, game) => {
-//   if (validateGame(game.reveals)) {
-//     acc += game.index
-//   }
-//   return acc
-// }, 0)
+const solutions = input
+  .reduce((acc, line) => {
+    const { index, requirements, reveals, valid } = parseGame(line)
+    if (valid) { acc.part1 += index }
+    const { red, green, blue } = requirements
+    acc.part2 += red*blue*green
+    return acc
+  }, { part1: 0, part2: 0 })
 
-console.log('part 1', validGameIdSum)
-
-const powerSum = games.reduce((sum, game) => {
-  const { red, green, blue } = gameRequirements(game.reveals)
-  return sum + red*blue*green
-}, 0)
-
-console.log('part 2', powerSum)
+console.log(solutions)
