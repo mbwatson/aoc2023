@@ -1,13 +1,11 @@
+// --- Day 4: Scratchcards ---
+
 import { readFileLines } from '../util/read-file-lines.mjs'
 
 //
 
 const testInput = readFileLines('./test-input.txt')
 const realInput = readFileLines('./input.txt')
-
-const scoreScard = ({ winning, mine }) => {
-  return score
-}
 
 const parseCard = card => {
     const pattern = new RegExp(/^Card\W+(\d+): (.+)$/g)
