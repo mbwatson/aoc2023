@@ -1,18 +1,13 @@
 // --- Day 6: Wait For It ---
 
+import { quadSolve } from '../util/quad-solve.mjs'
 import { readFileLines } from '../util/read-file-lines.mjs'
+import { zip } from '../util/zip.mjs'
 
 //
 
 const testInput = readFileLines('./test-input.txt')
 const realInput = readFileLines('./input.txt')
-
-const zip = (a, b) => a.map((k, i) => [k, b[i]])
-
-const quadSolve = (a, b, c) => [
-  (-b + Math.sqrt(b ** 2 - 4 * a * c)) / 2,
-  (-b - Math.sqrt(b ** 2 - 4 * a * c)) / 2,
-].sort()
 
 const parser = data => {
   const [times, distances] = data.map(d => d.split(/\W+/g).slice(1).map(n => parseInt(n)))
